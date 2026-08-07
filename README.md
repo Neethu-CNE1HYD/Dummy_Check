@@ -114,3 +114,5 @@ gcc -o bin/qr_gen main.c png_writer.c display.c -lqrencode -lpng
 - Generate QR codes from any URL
 - Display in terminal using Unicode blocks
 - Export as high-quality PNG images
+- Exits with a non-zero status code on failure (e.g. missing/invalid arguments or QR encoding errors), so the exit code can be checked in scripts
+- Supports building with the [Anvil](https://github.com/dexter-xD/Anvil) build system via the included `anvil.conf`, in addition to the Makefile

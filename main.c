@@ -32,7 +32,11 @@ int main(int argument_count, char* argument_values[]) {
 
     if (output_filename) {
         /* save as PNG file */
-        create_png_from_qr(generated_qr, output_filename);
+        if (create_png_from_qr(generated_qr, output_filename) != 0) {
+            fprintf(stderr, "Failed to save QR code as: %s\n", output_filename);
+            QRcode_free(generated_qr);
+            return 1;
+        }
         printf("QR code saved as: %s\n", output_filename);
     }
     else {
