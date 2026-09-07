@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
 LIBS = -lqrencode -lpng
 TARGET = qr_gen
-SRCS = main.c png_writer.c display.c
+SRCS = main.c png_writer.c display.c qr_validator.c
 
 OBJ_DIR = obj
 BIN_DIR = bin

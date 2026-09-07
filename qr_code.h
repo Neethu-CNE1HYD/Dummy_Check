@@ -15,4 +15,7 @@
 void create_png_from_qr(QRcode* qr_code, const char* filename);
 void display_qr_in_terminal(QRcode* qr_code);
 
+/* validate the user-supplied input before encoding (qr_validator.c) */
+int validate_qr_input(const char* input);
+
 #endif /* QR_CODE_H */

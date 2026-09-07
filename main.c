@@ -18,6 +18,11 @@ int main(int argument_count, char* argument_values[]) {
     const char* website_url = argument_values[1];
     const char* output_filename = (argument_count == 3) ? argument_values[2] : NULL;
 
+    /* make sure the input is something we can actually encode */
+    if (!validate_qr_input(website_url)) {
+        return 1;
+    }
+
     /* actually generate the QR code */
     QRcode* generated_qr = QRcode_encodeString(website_url, 0, QR_ECLEVEL_M, QR_MODE_8, 1);
 
