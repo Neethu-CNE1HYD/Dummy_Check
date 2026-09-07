@@ -1,7 +1,8 @@
 #include "qr_code.h"
 
-/* save the QR code as a proper PNG image file */
-void create_png_from_qr(QRcode* qr_code, const char* filename) {
+/* save the QR code as a proper PNG image file.
+ * returns 0 on success, non-zero on failure. */
+int create_png_from_qr(QRcode* qr_code, const char* filename) {
     int qr_size = qr_code->width;
     int final_image_size = (qr_size + 2 * BORDER_MARGIN) * PIXEL_SIZE_PER_MODULE;
 
@@ -9,7 +10,7 @@ void create_png_from_qr(QRcode* qr_code, const char* filename) {
     FILE* output_file = fopen(filename, "wb");
     if (!output_file) {
         fprintf(stderr, "Oops! Couldn't create file %s\n", filename);
-        return;
+        return 1;
     }
 
     /* set up PNG writing structures */
@@ -17,7 +18,7 @@ void create_png_from_qr(QRcode* qr_code, const char* filename) {
     if (!png_writer) {
         fclose(output_file);
         fprintf(stderr, "Problem setting up PNG writer\n");
-        return;
+        return 1;
     }
 
     png_infop png_info = png_create_info_struct(png_writer);
@@ -25,7 +26,7 @@ void create_png_from_qr(QRcode* qr_code, const char* filename) {
         png_destroy_write_struct(&png_writer, NULL);
         fclose(output_file);
         fprintf(stderr, "Problem setting up PNG info\n");
-        return;
+        return 1;
     }
 
     /* error handling for PNG library */
@@ -33,7 +34,7 @@ void create_png_from_qr(QRcode* qr_code, const char* filename) {
         png_destroy_write_struct(&png_writer, &png_info);
         fclose(output_file);
         fprintf(stderr, "Something went wrong while writing PNG\n");
-        return;
+        return 1;
     }
 
     png_init_io(png_writer, output_file);
@@ -47,6 +48,12 @@ void create_png_from_qr(QRcode* qr_code, const char* filename) {
 
     /* make space for one row of pixels at a time */
     png_bytep pixel_row = (png_bytep)malloc(3 * final_image_size * sizeof(png_byte));
+    if (!pixel_row) {
+        png_destroy_write_struct(&png_writer, &png_info);
+        fclose(output_file);
+        fprintf(stderr, "Ran out of memory while writing PNG\n");
+        return 1;
+    }
 
     /* draw each pixel in the final image */
     for (int y_coord = 0; y_coord < final_image_size; y_coord++) {
@@ -79,4 +86,5 @@ void create_png_from_qr(QRcode* qr_code, const char* filename) {
     free(pixel_row);
     png_destroy_write_struct(&png_writer, &png_info);
     fclose(output_file);
+    return 0;
 }
