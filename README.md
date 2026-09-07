@@ -28,6 +28,7 @@ qr_code_project/
 ├── main.c         # Main program
 ├── png_writer.c   # PNG generation
 ├── display.c      # Terminal display
+├── qr_validator.c # Input validation
 └── Makefile       # Build automation
 ```
 
@@ -87,7 +88,7 @@ make install-deps
 
 ### Manual Compilation
 ```bash
-gcc -o bin/qr_gen main.c png_writer.c display.c -lqrencode -lpng
+gcc -o bin/qr_gen main.c png_writer.c display.c qr_validator.c -lqrencode -lpng
 ```
 
 ## Usage
@@ -112,5 +113,6 @@ gcc -o bin/qr_gen main.c png_writer.c display.c -lqrencode -lpng
 ## Features
 
 - Generate QR codes from any URL
+- Validate and normalize input before encoding
 - Display in terminal using Unicode blocks
 - Export as high-quality PNG images
