@@ -99,6 +99,8 @@ gcc -o bin/qr_gen main.c png_writer.c display.c -lqrencode -lpng
 - `<url>` - Website link to encode in QR code
 - `[output.png]` - Optional: Save as PNG file (shows in terminal if omitted)
 
+Invalid usage prints the help text to stderr and exits with status 1.
+
 ## Examples
 
 ```bash
