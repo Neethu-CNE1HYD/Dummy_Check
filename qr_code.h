@@ -12,7 +12,7 @@
 #define BORDER_MARGIN 4           /* white space around the QR code */
 
 /* function declarations */
-void create_png_from_qr(QRcode* qr_code, const char* filename);
+int create_png_from_qr(QRcode* qr_code, const char* filename);
 void display_qr_in_terminal(QRcode* qr_code);
 
 #endif /* QR_CODE_H */

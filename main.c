@@ -3,15 +3,15 @@
 int main(int argument_count, char* argument_values[]) {
     /* check if user provided the right arguments */
     if (argument_count < 2 || argument_count > 3) {
-        printf("How to use this program:\n");
-        printf("  %s <your-link> [output-filename.png]\n", argument_values[0]);
-        printf("  <your-link>        - The website address you want in the QR code\n");
-        printf("  [output-filename.png] - Optional: Where to save the QR code image\n");
-        printf("\n");
-        printf("Examples:\n");
-        printf("  %s \"https://devlogs.xyz\"\n", argument_values[0]);
-        printf("  %s \"https://devlogs.xyz\" my_qr_code.png\n", argument_values[0]);
-        printf("\nIf you don't specify an output file, it just shows the QR code in terminal.\n");
+        fprintf(stderr, "How to use this program:\n");
+        fprintf(stderr, "  %s <your-link> [output-filename.png]\n", argument_values[0]);
+        fprintf(stderr, "  <your-link>        - The website address you want in the QR code\n");
+        fprintf(stderr, "  [output-filename.png] - Optional: Where to save the QR code image\n");
+        fprintf(stderr, "\n");
+        fprintf(stderr, "Examples:\n");
+        fprintf(stderr, "  %s \"https://devlogs.xyz\"\n", argument_values[0]);
+        fprintf(stderr, "  %s \"https://devlogs.xyz\" my_qr_code.png\n", argument_values[0]);
+        fprintf(stderr, "\nIf you don't specify an output file, it just shows the QR code in terminal.\n");
         return 1;
     }
 
@@ -32,7 +32,11 @@ int main(int argument_count, char* argument_values[]) {
 
     if (output_filename) {
         /* save as PNG file */
-        create_png_from_qr(generated_qr, output_filename);
+        if (create_png_from_qr(generated_qr, output_filename) != 0) {
+            fprintf(stderr, "Failed to save QR code as: %s\n", output_filename);
+            QRcode_free(generated_qr);
+            return 1;
+        }
         printf("QR code saved as: %s\n", output_filename);
     }
     else {
