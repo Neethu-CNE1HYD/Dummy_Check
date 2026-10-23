@@ -29,8 +29,12 @@ int create_png_from_qr(QRcode* qr_code, const char* filename) {
         return 1;
     }
 
+    /* allocated before setjmp so the error path below can free it */
+    png_bytep volatile pixel_row = NULL;
+
     /* error handling for PNG library */
     if (setjmp(png_jmpbuf(png_writer))) {
+        free(pixel_row);
         png_destroy_write_struct(&png_writer, &png_info);
         fclose(output_file);
         fprintf(stderr, "Something went wrong while writing PNG\n");
@@ -47,7 +51,7 @@ int create_png_from_qr(QRcode* qr_code, const char* filename) {
     png_write_info(png_writer, png_info);
 
     /* make space for one row of pixels at a time */
-    png_bytep pixel_row = (png_bytep)malloc(3 * final_image_size * sizeof(png_byte));
+    pixel_row = (png_bytep)malloc(3 * final_image_size * sizeof(png_byte));
     if (!pixel_row) {
         png_destroy_write_struct(&png_writer, &png_info);
         fclose(output_file);
@@ -85,6 +89,12 @@ int create_png_from_qr(QRcode* qr_code, const char* filename) {
 
     free(pixel_row);
     png_destroy_write_struct(&png_writer, &png_info);
-    fclose(output_file);
+
+    /* fclose can fail on a buffered write error (e.g. disk full) */
+    if (fclose(output_file) != 0) {
+        fprintf(stderr, "Failed to finish writing %s
+", filename);
+        return 1;
+    }
     return 0;
 }
